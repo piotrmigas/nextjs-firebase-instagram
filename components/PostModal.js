@@ -43,7 +43,7 @@ const PostModal = ({ open, setOpen, id, username, session }) => {
               disabled={session?.user?.username !== username}
               ref={delBtnRef}
               type="button"
-              className="disabled:cursor-not-allowed inline-flex justify-center py-2 text-md font-medium w-60 sm:w-96 transition-all transform rounded-lg bg-white text-red-500"
+              className="disabled:cursor-not-allowed inline-flex justify-center py-2 text-md font-medium w-60 sm:w-96 transition-all transform rounded-lg bg-white text-red-500 focus:outline-none"
               onClick={deletePost}
             >
               Delete
