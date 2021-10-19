@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { getDownloadURL, ref, uploadString } from "@firebase/storage";
 import { storage, db } from "../firebase";
 
-const Modal = ({ open, setOpen }) => {
+const AddPostModal = ({ open, setOpen }) => {
   const { data: session } = useSession();
 
   const filePickerRef = useRef(null);
@@ -117,7 +117,7 @@ const Modal = ({ open, setOpen }) => {
                     onClick={uploadPost}
                     disabled={!selectedFile}
                     type="button"
-                    className="inline-flex justify-center w-full rounded-md border border-transparentshadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white focus:outline-none sm:text-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white focus:outline-none sm:text-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
                   >
                     {loading ? "Uploading..." : "Upload Post"}
                   </button>
@@ -131,4 +131,4 @@ const Modal = ({ open, setOpen }) => {
   );
 };
 
-export default Modal;
+export default AddPostModal;

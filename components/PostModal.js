@@ -3,13 +3,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { deleteDoc, doc } from "@firebase/firestore";
 import { db } from "../firebase";
 
-const PostModal = ({ open, setOpen, id, username, session }) => {
+const PostModal = ({ open, setOpen, id, username, session, setEditing }) => {
   const deletePost = async () => {
     await deleteDoc(doc(db, "posts", id));
     setOpen(false);
   };
 
   const delBtnRef = useRef(null);
+  const editBtnRef = useRef(null);
 
   return (
     <Transition appear show={open} as={Fragment}>
@@ -24,7 +25,7 @@ const PostModal = ({ open, setOpen, id, username, session }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
           {/* Centrowanie modala */}
           <span className="inline-block h-screen align-middle" aria-hidden="true">
@@ -33,21 +34,35 @@ const PostModal = ({ open, setOpen, id, username, session }) => {
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
+            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enterTo="opacity-100 translate-y-0 sm:scale-100"
             leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
+            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <button
-              disabled={session?.user?.username !== username}
-              ref={delBtnRef}
-              type="button"
-              className="disabled:cursor-not-allowed inline-flex justify-center py-2 text-md font-medium w-60 sm:w-96 transition-all transform rounded-lg bg-white text-red-500 focus:outline-none"
-              onClick={deletePost}
-            >
-              Delete
-            </button>
+            <div className="inline-block align-bottom bg-white rounded-lg shadow-xl transform transition-all sm:align-middle sm:max-w-sm sm:w-full">
+              <button
+                disabled={session?.user?.username !== username}
+                ref={delBtnRef}
+                type="button"
+                className="inline-flex justify-center py-2 text-base font-medium w-full rounded-t-lg focus:outline-none sm:text-sm disabled:cursor-not-allowed text-red-500 border-b border-gray-300"
+                onClick={deletePost}
+              >
+                Delete
+              </button>
+              <button
+                disabled={session?.user?.username !== username}
+                ref={editBtnRef}
+                type="button"
+                className="inline-flex justify-center py-2 text-base font-medium w-full rounded-lg focus:outline-none sm:text-sm disabled:cursor-not-allowed"
+                onClick={() => {
+                  setEditing(true);
+                  setOpen(false);
+                }}
+              >
+                Edit
+              </button>
+            </div>
           </Transition.Child>
         </div>
       </Dialog>

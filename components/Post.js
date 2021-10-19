@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
   ChatIcon,
@@ -8,7 +8,7 @@ import {
   DotsHorizontalIcon,
   BookmarkIcon,
 } from "@heroicons/react/outline";
-import { HeartIcon as HearIconSolid } from "@heroicons/react/solid";
+import { HeartIcon as HearIconSolid, CheckIcon, XIcon } from "@heroicons/react/solid";
 import {
   addDoc,
   collection,
@@ -19,6 +19,7 @@ import {
   setDoc,
   doc,
   deleteDoc,
+  updateDoc,
 } from "@firebase/firestore";
 import Moment from "react-moment";
 import "emoji-mart/css/emoji-mart.css";
@@ -34,6 +35,8 @@ const Post = ({ id, username, profileImg, image, caption }) => {
   const [hasLiked, setHasLiked] = useState(false);
   const [emojiPicker, setEmojiPicker] = useState(false);
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editedCaption, setEditedCaption] = useState(caption);
 
   useEffect(() => setHasLiked(likes.findIndex((like) => like.id === session?.user?.uid) !== -1), [likes]);
 
@@ -70,8 +73,27 @@ const Post = ({ id, username, profileImg, image, caption }) => {
   };
 
   const handleEmoji = (emoji) => {
-    setComment(comment + emoji.native);
+    if (editing) {
+      setEditedCaption(editedCaption + emoji.native);
+    } else {
+      setComment(comment + emoji.native);
+    }
     setEmojiPicker(false);
+  };
+
+  const editRef = useRef();
+
+  useEffect(() => {
+    if (editRef && editRef.current && editing === true) {
+      editRef.current.focus();
+    }
+  }, [editing, editRef]);
+
+  const editCaption = async () => {
+    await updateDoc(doc(db, "posts", id), {
+      caption: editedCaption,
+    });
+    setEditing(false);
   };
 
   return (
@@ -96,10 +118,26 @@ const Post = ({ id, username, profileImg, image, caption }) => {
           <BookmarkIcon className="btn" />
         </div>
       )}
-      <div className="p-5 truncate">
+      <div className="p-5">
         {likes.length > 0 && <p className="font-bold mb-1">{likes.length} likes</p>}
-        <span className="font-bold mr-1">{username} </span>
-        {caption}
+        <div className="flex items-center">
+          <div className="font-bold mr-2">{username}</div>
+          {editing ? (
+            <div className="flex items-center w-full">
+              <input
+                type="text"
+                ref={editRef}
+                value={editedCaption}
+                className="border-none focus:ring-0 p-0 mr-1 w-full"
+                onChange={(e) => setEditedCaption(e.target.value)}
+              />
+              <CheckIcon className="btn text-green-500 h-5 mr-1" onClick={editCaption} />
+              <XIcon className="btn text-red-500 h-5" onClick={() => setEditing(false)} />
+            </div>
+          ) : (
+            <p className="truncate">{caption}</p>
+          )}
+        </div>
       </div>
       {comments.length > 0 && (
         <div className="ml-10 h-20 overflow-y-scroll scrollbar-thumb-black scrollbar-thin">
@@ -147,7 +185,7 @@ const Post = ({ id, username, profileImg, image, caption }) => {
           />
         )}
       </div>
-      {open && <PostModal open={open} setOpen={setOpen} id={id} username={username} session={session} />}
+      <PostModal setEditing={setEditing} open={open} setOpen={setOpen} id={id} username={username} session={session} />
     </div>
   );
 };

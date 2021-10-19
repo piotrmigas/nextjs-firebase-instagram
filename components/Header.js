@@ -11,7 +11,7 @@ const Header = ({ setOpen }) => {
 
   return (
     <div className="shadow-sm border-b bg-white sticky top-0 z-50">
-      <div className="flex justify-between max-w-6xl mx-5 xl:mx-auto">
+      <div className="flex justify-between max-w-6xl mx-5 lg:mx-auto">
         <div onClick={() => router.push("/")} className="relative hidden lg:inline-grid w-24 cursor-pointer">
           <Image
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/2880px-Instagram_logo.svg.png"
@@ -43,7 +43,7 @@ const Header = ({ setOpen }) => {
               <HeartIcon className="navBtn" />
               <img
                 onClick={() => signOut({ redirect: false })}
-                src={session.user.image}
+                src={session?.user?.image}
                 alt=""
                 className="h-10 w-10 rounded-full cursor-pointer"
               />
