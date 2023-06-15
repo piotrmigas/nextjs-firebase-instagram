@@ -10,7 +10,7 @@ export default function Search() {
 
   useEffect(() => {
     dispatch(filterPosts(searchTerm));
-  }, [searchTerm]);
+  }, [searchTerm, dispatch]);
 
   return (
     <div className='max-w-xs'>

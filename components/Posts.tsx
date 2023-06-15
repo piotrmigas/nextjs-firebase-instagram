@@ -17,7 +17,7 @@ export default function Posts() {
       onSnapshot(query(collection(db, 'posts'), orderBy('timestamp', 'desc')), (snap) => {
         dispatch(getPosts(snap.docs));
       }),
-    [db]
+    [dispatch]
   );
 
   if (!posts.length) return <p className='p-5 text-center'>Loading...</p>;

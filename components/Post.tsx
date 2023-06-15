@@ -46,17 +46,20 @@ export default function Post({ id, username, profileImg, image, caption }: Props
   const [editing, setEditing] = useState(false);
   const [editedCaption, setEditedCaption] = useState(caption);
 
-  useEffect(() => setHasLiked(likes.findIndex((like) => like.id === session?.user?.uid) !== -1), [likes]);
+  useEffect(
+    () => setHasLiked(likes.findIndex((like) => like.id === session?.user?.uid) !== -1),
+    [likes, session?.user?.uid]
+  );
 
   useEffect(
     () =>
       onSnapshot(query(collection(db, 'posts', id, 'comments'), orderBy('timestamp', 'desc')), (snap) =>
         setComments(snap.docs)
       ),
-    [db, id]
+    [id]
   );
 
-  useEffect(() => onSnapshot(query(collection(db, 'posts', id, 'likes')), (snap) => setLikes(snap.docs)), [db, id]);
+  useEffect(() => onSnapshot(query(collection(db, 'posts', id, 'likes')), (snap) => setLikes(snap.docs)), [id]);
 
   const likePost = async () => {
     if (hasLiked) {
